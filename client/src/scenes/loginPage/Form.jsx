@@ -7,14 +7,17 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import { Formik } from "formik";
-import * as yup from "yup";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined"; // MUI Material
+import { Formik } from "formik"; // Open Source Form Library
+import * as yup from "yup"; // Validation Library
+import { useNavigate } from "react-router-dom"; // Redirect User
+import { useDispatch } from "react-redux"; 
 import { setLogin } from "state";
-import Dropzone from "react-dropzone";
+import Dropzone from "react-dropzone"; // For Dropping files into App
 import FlexBetween from "components/FlexBetween";
+
+
+// yup validation Schemas.
 
 const registerSchema = yup.object().shape({
   firstName: yup.string().required("required"),
@@ -30,6 +33,9 @@ const loginSchema = yup.object().shape({
   email: yup.string().email("invalid email").required("required"),
   password: yup.string().required("required"),
 });
+
+
+// Initial Values for the Formik Schemas 
 
 const initialValuesRegister = {
   firstName: "",
@@ -47,17 +53,23 @@ const initialValuesLogin = {
 };
 
 const Form = () => {
+  // Display different form based on State.
   const [pageType, setPageType] = useState("login");
+
   const { palette } = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  // Check if not Mobile.
   const isNonMobile = useMediaQuery("(min-width:600px)");
+
+  // Good naming convention. Boolean Vars start with is.
   const isLogin = pageType === "login";
   const isRegister = pageType === "register";
 
   const register = async (values, onSubmitProps) => {
     // this allows us to send form info with image
-    const formData = new FormData();
+    const formData = new FormData(); // Easy key val pair creator.
     for (let value in values) {
       formData.append(value, values[value]);
     }
@@ -123,11 +135,11 @@ const Form = () => {
             display="grid"
             gap="30px"
             gridTemplateColumns="repeat(4, minmax(0, 1fr))"
-            sx={{
+            sx={{ // Splitting into two would also work rather than 4
               "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
             }}
           >
-            {isRegister && (
+            {isRegister && ( // If on the register page then display the following
               <>
                 <TextField
                   label="First Name"
@@ -135,10 +147,8 @@ const Form = () => {
                   onChange={handleChange}
                   value={values.firstName}
                   name="firstName"
-                  error={
-                    Boolean(touched.firstName) && Boolean(errors.firstName)
-                  }
-                  helperText={touched.firstName && errors.firstName}
+                  error={Boolean(touched.firstName) && Boolean(errors.firstName)} // Will display error if conditions met
+                  helperText={touched.firstName && errors.firstName} // DIsplay helper text if ^^
                   sx={{ gridColumn: "span 2" }}
                 />
                 <TextField
@@ -183,20 +193,21 @@ const Form = () => {
                     acceptedFiles=".jpg,.jpeg,.png"
                     multiple={false}
                     onDrop={(acceptedFiles) =>
+                      // Must be set manually due to Formik
                       setFieldValue("picture", acceptedFiles[0])
                     }
                   >
                     {({ getRootProps, getInputProps }) => (
                       <Box
-                        {...getRootProps()}
+                        {...getRootProps()} // Must manually add props with Dropzone.
                         border={`2px dashed ${palette.primary.main}`}
                         p="1rem"
                         sx={{ "&:hover": { cursor: "pointer" } }}
                       >
                         <input {...getInputProps()} />
-                        {!values.picture ? (
+                        {!values.picture ? ( // If no picture added.
                           <p>Add Picture Here</p>
-                        ) : (
+                        ) : ( // Otherwise show val of picture name
                           <FlexBetween>
                             <Typography>{values.picture.name}</Typography>
                             <EditOutlinedIcon />
