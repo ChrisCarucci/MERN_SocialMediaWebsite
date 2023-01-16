@@ -67,9 +67,11 @@ const Form = () => {
   const isLogin = pageType === "login";
   const isRegister = pageType === "register";
 
+  // this allows us to send form info with image
+  // Easy key val pair creator.
   const register = async (values, onSubmitProps) => {
-    // this allows us to send form info with image
-    const formData = new FormData(); // Easy key val pair creator.
+    
+    const formData = new FormData(); 
     for (let value in values) {
       formData.append(value, values[value]);
     }
@@ -87,6 +89,8 @@ const Form = () => {
 
     if (savedUser) {
       setPageType("login");
+    } else {
+      navigate("/")
     }
   };
 
